@@ -9,7 +9,7 @@ exports.signUp = async (req, res) => {
         .status(400)
         .json({ error: "Todos os campos tem que estar preenchidos" });
     }
-    const result = register(email, password, username);
+    const result = await register(email, password, username);
     res.status(201).json(result);
   } catch (err) {
     res.status(500).json({ error: "Erro interno do servidor" });
@@ -24,10 +24,11 @@ exports.signIn = async (req, res) => {
       return res.status(400).json({ error: "Campos inválidos" });
     }
 
-    const result = login(email, password);
+    const result = await login(email, password);
 
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: "Erro interno do servidor" });
+    console.log(err.message);
   }
 };
