@@ -6,9 +6,11 @@ const errorMiddleware = require("./src/middlewares/error.middleware");
 
 app.use(express.json());
 
-const userRoutes = require("./src/routes/userRoutes");
+const userRoutes = require("./src/routes/user.routes");
+const authRoutes = require("./src/routes/auth.routes")
 
 app.use("/users", userRoutes);
+app.use("/", authRoutes)
 
 const PORT = process.env.PORT || 3000;
 

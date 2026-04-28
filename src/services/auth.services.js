@@ -1,6 +1,10 @@
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const generateToken = require("../utils/generateToken");
 const userRepos = require("../repositories/user.repository");
+const tokensRepos = require("../repositories/tokens.repository");
+
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 
 exports.register = async (email, password, username) => {
   const userExisting = await userRepos.findByEmail(email);
@@ -11,7 +15,7 @@ exports.register = async (email, password, username) => {
   const newPassword = await bcrypt.hash(password, 10);
   const result = await userRepos.create(email, newPassword, username);
   const user = result.rows[0];
-  const token = generateToken(user);
+  const token = await generateToken(user);
 
   return {
     message: "Usuário criado com sucesso!",
@@ -36,7 +40,7 @@ exports.login = async (email, password) => {
     throw new Error("USER_OR_PASSWORD_WRONG");
   }
 
-  const token = generateToken(user);
+  const token = await generateToken(user);
 
   return {
     message: "Logado com sucesso.",
@@ -47,4 +51,35 @@ exports.login = async (email, password) => {
       username: user.username,
     },
   };
+};
+
+exports.refresh = async (token) => {
+  const payload = jwt.verify(token, JWT_REFRESH_SECRET);
+
+  if (payload.type !== "refresh") {
+    throw new Error("INVALID_REFRESH_TOKEN");
+  }
+
+  const tokenDb = await tokensRepos.findToken(token);
+
+  if (tokenDb.rows.length === 0) {
+    throw new Error("INVALID_REFRESH_TOKEN,");
+  }
+  const tokenData = tokenDb.rows[0];
+
+  if (!tokenData.is_valid) {
+    throw new Error("TOKEN_INVALID");
+  }
+
+  await tokensRepos.invalidateToken(token);
+
+  const userResult = await userRepos.findById(payload.id);
+
+  if (userResult.rows.length === 0) {
+    throw new Error("USER_NOT_FOUND");
+  }
+
+  const user = userResult.rows[0];
+
+  return await generateToken(user);
 };

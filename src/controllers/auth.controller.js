@@ -1,4 +1,4 @@
-const { register, login } = require("../services/auth.services");
+const { register, login, refresh } = require("../services/auth.services");
 
 exports.signUp = async (req, res) => {
   try {
@@ -17,6 +17,18 @@ exports.signIn = async (req, res) => {
 
     res.json(result);
   } catch (err) {
+    res.status(500).json({ error: "Erro interno do servidor" });
+    console.log(err.message);
+  }
+};
+
+exports.refresh = async (req, res) => {
+  try {
+    const token = req.body.refreshToken;
+    const result = await refresh(token);
+    
+    res.json(result)
+  } catch (err){
     res.status(500).json({ error: "Erro interno do servidor" });
     console.log(err.message);
   }
