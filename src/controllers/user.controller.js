@@ -4,19 +4,18 @@ const {
   profileUser,
 } = require("../services/user.services");
 
-exports.profile = async (req, res) => {
+exports.profile = async (req, res, next) => {
   try {
     const id = req.user.id;
     const result = await profileUser(id);
 
     res.json(result);
   } catch (err) {
-    res.status(500).json({ error: "Erro interno do servidor" });
-    console.log(err.message);
+    next(err)
   }
 };
 
-exports.update = async (req, res) => {
+exports.update = async (req, res, next) => {
   try {
     const id = req.user.id;
     const { username, password } = req.body;
@@ -24,16 +23,16 @@ exports.update = async (req, res) => {
     const result = await updateUser(id, username, password);
     res.json(result);
   } catch (err) {
-    res.status(500).json({ error: "Erro interno do servidor" });
+    next(err)
   }
 };
 
-exports.delete = async (req, res) => {
+exports.delete = async (req, res, next) => {
   try {
     const id = req.user.id;
     const result = await deleteUser(id);
     res.json(result);
   } catch (err) {
-    res.status(500).json({ error: "Erro interno do servidor" });
+    next(err)
   }
 };

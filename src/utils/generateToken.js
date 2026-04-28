@@ -21,8 +21,6 @@ module.exports = async (user) => {
 
     return { acessToken, refreshToken };
   } catch (err) {
-    console.error(err);
-    console.log(user)
     throw new Error("TOKEN_GENERATION_ERROR");
   }
 };

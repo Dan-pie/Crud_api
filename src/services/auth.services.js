@@ -68,7 +68,7 @@ exports.refresh = async (token) => {
   const tokenData = tokenDb.rows[0];
 
   if (!tokenData.is_valid) {
-    throw new Error("TOKEN_INVALID");
+    throw new Error("INVALID_REFRESH_TOKEN");
   }
 
   await tokensRepos.invalidateToken(token);

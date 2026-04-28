@@ -19,5 +19,12 @@ module.exports = (err, req, res, next) => {
     return res.status(400).json({ error: "Usuário já existe" });
   }
 
-  res.status(500).json({ error: "Erro interno do servidor" });
+  if (err.message === "INVALID_REFRESH_TOKEN"){
+    return res.status(401).json({error: "Token inválido"})
+  }
+
+  if (err.message === "NOTHING_TO_UPDATE"){
+    return res.status(400).json({error: "Nada para atualizar"})
+  }
+  res.status(500).json({ error: "Erro interno do servidor", errorMessage: err.message });
 };
