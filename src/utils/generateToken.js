@@ -5,12 +5,12 @@ const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 
 module.exports = async (user) => {
   try {
-    const acessToken = jwt.sign({ id: user.id, type: "acess" }, JWT_SECRET, {
+    const acessToken = jwt.sign({ id: user.id, role: user.role,  type: "acess" }, JWT_SECRET, {
       expiresIn: "15m",
     });
 
     const refreshToken = jwt.sign(
-      { id: user.id, type: "refresh" },
+      { id: user.id, role: user.role, type: "refresh" },
       JWT_REFRESH_SECRET,
       {
         expiresIn: "5h",

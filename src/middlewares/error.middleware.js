@@ -26,5 +26,9 @@ module.exports = (err, req, res, next) => {
   if (err.message === "NOTHING_TO_UPDATE"){
     return res.status(400).json({error: "Nada para atualizar"})
   }
+
+  if (err.message === "UNAUTHORIZED"){
+    return res.status(401).json({error: "Não autorizado"})
+  }
   res.status(500).json({ error: "Erro interno do servidor", errorMessage: err.message });
 };
