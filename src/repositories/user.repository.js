@@ -22,3 +22,11 @@ exports.delete = (id) => {
 exports.update = (query, value) => {
   return db.query(query, value);
 };
+
+exports.changeRole = (role, id) => {
+  return db.query("UPDATE users SET role = $1 WHERE id = $2 RETURNING username, role;", [role, id])
+}
+
+exports.seeAllProfiles = () => {
+  return db.query("SELECT id, email, username, role FROM users;")
+}
