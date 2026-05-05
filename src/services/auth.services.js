@@ -83,3 +83,16 @@ exports.refresh = async (token) => {
 
   return await generateToken(user);
 };
+
+
+exports.logout = async (requestUser, token) => {
+  const payload = jwt.verify(token, JWT_REFRESH_SECRET)
+  const isAdmin = requestUser.role === "admin"
+  const isOwn = requestUser.id === payload.id
+
+  if(!isAdmin && !isOwn){
+    throw new Error("FORBIDDEN")
+  }
+  await tokensRepos.invalidateToken(token)
+  return {message: "deslogado com sucesso!"}
+} 

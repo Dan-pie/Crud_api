@@ -1,4 +1,4 @@
-const { register, login, refresh } = require("../services/auth.services");
+const { register, login, refresh, logout } = require("../services/auth.services");
 
 exports.signUp = async (req, res, next) => {
   try {
@@ -31,3 +31,14 @@ exports.refresh = async (req, res, next) => {
     next(err)
   }
 };
+
+exports.logout = async (req, res, next) => {
+  try {
+    const user = req.user
+    const token = req.params.refreshToken || req.body.refreshToken
+    const result = await logout(user, token)
+    res.json(result)
+  } catch (err) {
+    next(err)
+  }
+}
